@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { NuxtError } from '#app';
 import { useI18n } from 'vue-i18n'
-import type { NuxtError } from '#imports'
 
 const props = defineProps<{ error: NuxtError }>()
 const { t } = useI18n()
