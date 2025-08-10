@@ -1,7 +1,7 @@
-<!-- app\pages\auth\index.vue -->
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
 import type { SubmitPayload } from '~/components/AuthForm.vue'
+import { useI18n } from 'vue-i18n'
 
 type FetchError = {
   data?: {
@@ -12,6 +12,7 @@ type FetchError = {
 const mode = ref<'login' | 'register'>('login')
 const { signIn } = useAuth()
 const toast = useToast()
+const { t } = useI18n()
 
 const _onSubmit = async (e: FormSubmitEvent<SubmitPayload>) => {
   try {
@@ -25,8 +26,8 @@ const _onSubmit = async (e: FormSubmitEvent<SubmitPayload>) => {
         body: { name, email, password }
       })
       toast.add({ 
-        title: 'Registration successful', 
-        description: 'Please log in', 
+        title: t('authIndex.registrationSuccessful'), 
+        description: t('authIndex.pleaseLogIn'), 
         color: 'success' 
       })
       mode.value = 'login'
@@ -34,8 +35,8 @@ const _onSubmit = async (e: FormSubmitEvent<SubmitPayload>) => {
   } catch (err) {
     const error = err as FetchError
     toast.add({
-      title: mode.value === 'login' ? 'Login failed' : 'Registration failed',
-      description: error.data?.message || 'Unknown error',
+      title: mode.value === 'login' ? t('authIndex.loginFailed') : t('authIndex.registrationFailed'),
+      description: error.data?.message || t('authIndex.unknownError'),
       color: 'error'
     })
   }
@@ -53,7 +54,7 @@ const _onSubmit = async (e: FormSubmitEvent<SubmitPayload>) => {
         block
         @click="mode = mode === 'login' ? 'register' : 'login'"
       >
-        {{ mode === 'login' ? "Don't have an account? Register" : "Already have an account? Login" }}
+        {{ mode === 'login' ? t('authIndex.dontHaveAccount') : t('authIndex.alreadyHaveAccount') }}
       </UButton>
     </div>
   </div>

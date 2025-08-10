@@ -1,8 +1,9 @@
-<!-- LogoutButton.vue -->
 <script setup lang="ts">
 import { useAuth } from '#imports'
+import { useI18n } from 'vue-i18n'
 
 const { signOut } = useAuth();
+const { t } = useI18n();
 
 const handleLogout = async () => {
   try {
@@ -15,5 +16,5 @@ const handleLogout = async () => {
 </script>
 
 <template>
-  <UButton @click="handleLogout">Log out</UButton>
+  <UButton @click="handleLogout">{{ t('logoutButton.logOut') }}</UButton>
 </template>

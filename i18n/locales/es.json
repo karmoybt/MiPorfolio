@@ -1,4 +1,47 @@
 {
   "home": "Inicio",
-  "about": "Acerca de"
+  "about": "Acerca de",
+  "authForm": {
+    "welcomeBack": "¡Bienvenido de nuevo!",
+    "createAccount": "Crear una cuenta",
+    "resetPassword": "Restablecer tu contraseña",
+    "noAccount": "¿No tienes una cuenta?",
+    "alreadyAccount": "¿Ya tienes una cuenta?",
+    "rememberPassword": "¿Recuerdas tu contraseña?",
+    "backToLogin": "Volver al inicio de sesión",
+    "logIn": "Iniciar sesión",
+    "createAccountButton": "Crear cuenta",
+    "sendResetLink": "Enviar enlace de restablecimiento",
+    "fullName": "Nombre completo",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "rememberMe": "Recordarme"
+  },
+  "logoutButton": {
+    "logOut": "Cerrar sesión"
+  },
+  "authIndex": {
+    "loginFailed": "Inicio de sesión fallido",
+    "registrationFailed": "Registro fallido",
+    "registrationSuccessful": "Registro exitoso",
+    "pleaseLogIn": "Por favor, inicia sesión",
+    "dontHaveAccount": "¿No tienes una cuenta? Regístrate",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta? Inicia sesión"
+    },
+   "errorPage": {
+    "404Title": "Page not found",
+    "404Description": "The page you are looking for does not exist or has been moved.",
+    "403Title": "Access forbidden",
+    "403Description": "You do not have permission to access this section.",
+    "500Title": "Server error",
+    "500Description": "Something went wrong on our servers. We are working to fix it.",
+    "unknownTitle": "Unknown error",
+    "unknownDescription": "An unexpected error occurred.",
+    "goHome": "Go home",
+    "retry": "Retry",
+    "showDetails": "Show details",
+    "hideDetails": "Hide details"
+  }
+
+  
 }

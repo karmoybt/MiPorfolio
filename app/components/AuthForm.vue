@@ -1,7 +1,7 @@
-<!-- app\components\AuthForm.vue -->
 <script setup lang="ts">
 import { z } from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
+import { useI18n } from 'vue-i18n'
 
 type Mode = 'login' | 'register' | 'forgot'
 
@@ -26,22 +26,24 @@ const schemas = {
 }
 const schema = computed(() => schemas[props.mode])
 
+const { t } = useI18n()
+
 const fields = computed(() => {
   switch (props.mode) {
     case 'register':
       return [
-        { name: 'name' as const, label: 'Full name', placeholder: 'Jane Doe', type: 'text' as const },
-        { name: 'email' as const, label: 'Email', placeholder: 'jane@doe.com', type: 'email' as const },
-        { name: 'password' as const, label: 'Password', placeholder: '••••••••', type: 'password' as const }
+        { name: 'name' as const, label: t('authForm.fullName'), placeholder: t('authForm.fullName'), type: 'text' as const },
+        { name: 'email' as const, label: t('authForm.email'), placeholder: t('authForm.email'), type: 'email' as const },
+        { name: 'password' as const, label: t('authForm.password'), placeholder: t('authForm.password'), type: 'password' as const }
       ]
     case 'forgot':
       return [
-        { name: 'email' as const, label: 'Email', placeholder: 'jane@doe.com', type: 'email' as const }
+        { name: 'email' as const, label: t('authForm.email'), placeholder: t('authForm.email'), type: 'email' as const }
       ]
     default:
       return [
-        { name: 'email' as const, label: 'Email', placeholder: 'jane@doe.com', type: 'email' as const },
-        { name: 'password' as const, label: 'Password', placeholder: '••••••••', type: 'password' as const }
+        { name: 'email' as const, label: t('authForm.email'), placeholder: t('authForm.email'), type: 'email' as const },
+        { name: 'password' as const, label: t('authForm.password'), placeholder: t('authForm.password'), type: 'password' as const }
       ]
   }
 })
@@ -59,20 +61,20 @@ async function onSubmit(event: FormSubmitEvent<SubmitPayload>) {
     <div class="text-center">
       <UIcon name="i-lucide-user" class="mx-auto size-10 text-primary mb-2" />
       <h1 class="text-xl font-semibold">
-        {{ mode === 'login' ? 'Welcome back!' : mode === 'register' ? 'Create an account' : 'Reset your password' }}
+        {{ mode === 'login' ? t('authForm.welcomeBack') : mode === 'register' ? t('authForm.createAccount') : t('authForm.resetPassword') }}
       </h1>
       <p class="text-sm text-gray-500 mt-1">
         <span v-if="mode === 'login'">
-          Don’t have an account?
-          <ULink class="text-primary font-medium" @click="setMode('register')">Sign up</ULink>
+          {{ t('authForm.noAccount') }}
+          <ULink class="text-primary font-medium" @click="setMode('register')">{{ t('authForm.createAccount') }}</ULink>
         </span>
         <span v-else-if="mode === 'register'">
-          Already have an account?
-          <ULink class="text-primary font-medium" @click="setMode('login')">Log in</ULink>
+          {{ t('authForm.alreadyAccount') }}
+          <ULink class="text-primary font-medium" @click="setMode('login')">{{ t('authForm.logIn') }}</ULink>
         </span>
         <span v-else>
-          Remember your password?
-          <ULink class="text-primary font-medium" @click="setMode('login')">Back to login</ULink>
+          {{ t('authForm.rememberPassword') }}
+          <ULink class="text-primary font-medium" @click="setMode('login')">{{ t('authForm.backToLogin') }}</ULink>
         </span>
       </p>
     </div>
@@ -91,11 +93,11 @@ async function onSubmit(event: FormSubmitEvent<SubmitPayload>) {
       <UCheckbox
         v-if="mode === 'login'"
         v-model="state.remember"
-        label="Remember me"
+        :label="t('authForm.rememberMe')"
       />
 
       <UButton type="submit" block>
-        {{ mode === 'login' ? 'Log in' : mode === 'register' ? 'Create account' : 'Send reset link' }}
+        {{ mode === 'login' ? t('authForm.logIn') : mode === 'register' ? t('authForm.createAccountButton') : t('authForm.sendResetLink') }}
       </UButton>
     </UForm>
   </div>

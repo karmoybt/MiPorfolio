@@ -1,4 +1,3 @@
-// nuxt.config.ts
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
@@ -43,5 +42,10 @@ export default defineNuxtConfig({
   runtimeConfig: {
     authSecret: process.env.NUXT_AUTH_SECRET,
     databaseUrl: process.env.DATABASE_URL,
+    public: {
+      error: {
+        layout: 'error'
+      }
+    }
   }
 });
