@@ -1,18 +1,13 @@
 // server/api/auth/register.post.ts
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import init from '../../db/init.js';  
 import User from '../../db/models/user';
 
   
-let isInitialized = false;  
 
 
 export default defineEventHandler(async (event) => {
-    if (!isInitialized) {  
-    await init();  
-    isInitialized = true;  
-  }  
+
   const { name, email, password } = await readBody(event);
 
   // Verificar si el correo electrónico ya está registrado
