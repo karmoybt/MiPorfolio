@@ -1,10 +1,8 @@
 <!-- pages/dashboard/index.vue -->
 <script setup lang="ts">
 definePageMeta({
-  auth: {
-    navigateUnauthenticatedTo: '/auth',
-  },
-});
+  middleware: ['auth']
+})
 const { data } = useAuth();
 
 </script>

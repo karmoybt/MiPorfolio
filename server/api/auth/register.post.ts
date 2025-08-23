@@ -1,59 +1,56 @@
 // server/api/auth/register.post.ts
-import { Client } from 'pg'
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import init from '../../db/init.js';  
+import User from '../../db/models/user';
 
-interface DbUser {
-  id: string
-  name: string
-  email: string
-}
+  
+let isInitialized = false;  
+
 
 export default defineEventHandler(async (event) => {
-  const { name, email, password } = await readBody(event)
+    if (!isInitialized) {  
+    await init();  
+    isInitialized = true;  
+  }  
+  const { name, email, password } = await readBody(event);
 
-  // Hash password
-  const hashed = await bcrypt.hash(password, 10)
+  // Verificar si el correo electrónico ya está registrado
+  const exists = await User.findOne({ where: { email } });
+  if (exists) {
+    throw createError({ statusCode: 409, statusMessage: 'Email already registered' });
+  }
 
-  const client = new Client(useRuntimeConfig().databaseUrl)
-  await client.connect()
+  // Hash de la contraseña
+  const hashed = await bcrypt.hash(password, 10);
 
   try {
-    // Verificar duplicado
-    const exists = await client.query(
-      'SELECT id FROM public.usuarios WHERE email = $1 LIMIT 1',
-      [email]
-    )
-    if (exists.rows.length) {
-      throw createError({ statusCode: 409, statusMessage: 'Email already registered' })
-    }
+    // Crear un nuevo usuario
+    const user = await User.create({ name, email, password: hashed });
 
-    // Insertar
-    const res = await client.query<DbUser>(
-      'INSERT INTO public.usuarios (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email',
-      [name, email, hashed]
-    )
+    // Tipificar el modelo de usuario
+    const userData = user.get() as { id: number, name: string, email: string };
 
-    const user = res.rows[0]
-
-    // Token opcional (auto-login tras registro)
+    // Generar un token JWT
     const token = jwt.sign(
-      { sub: user.id, name: user.name, email: user.email },
+      { sub: userData.id, name: userData.name, email: userData.email },
       useRuntimeConfig().authSecret,
       { expiresIn: '7d' }
-    )
+    );
 
-    // Guardar el token en el estado de autenticación
+    // Establecer la cookie de autenticación
     setCookie(event, 'auth', token, {
       path: '/',
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 60 * 60 * 24 * 7 // 7 días
-    })
+    });
 
-    return { token, user }
-  } finally {
-    await client.end()
+    // Devolver el token y los datos del usuario
+    return { token, user: { id: userData.id, name: userData.name, email: userData.email } };
+  } catch (error) {
+    console.error('Error during registration:', error);
+    throw createError({ statusCode: 500, statusMessage: 'Internal Server Error' });
   }
-})
+});
