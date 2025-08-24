@@ -1,7 +1,7 @@
 <!-- pages/dashboard/index.vue -->
 <script setup lang="ts">
 definePageMeta({
-  middleware: ['auth']
+  middleware: ['auth-md']
 })
 const { data } = useAuth();
 
@@ -10,6 +10,6 @@ const { data } = useAuth();
 <template>
   <div>
     <h1>Hello {{ data?.name ?? 'User' }}!</h1>
-    <LogoutButton />
+    <!-- <LogoutButton /> -->
   </div>
 </template>

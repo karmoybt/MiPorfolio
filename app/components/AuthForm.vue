@@ -1,104 +1,211 @@
 <script setup lang="ts">
-import { z } from 'zod'
-import type { FormSubmitEvent } from '@nuxt/ui'
-import { useI18n } from 'vue-i18n'
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+// import { useToast } from '~/composables/useToast';
+// import { useAuth } from '~/composables/useAuth';
+import { z } from 'zod';
 
-type Mode = 'login' | 'register' | 'forgot'
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+  name: z.string().optional(),
+});
 
-interface Props { mode?: Mode }
-const props = withDefaults(defineProps<Props>(), { mode: 'login' })
+const state = ref({ email: '', password: '', name: '', remember: false });
+const activeTab = ref<'signIn' | 'signUp'>('signIn');
+const { t } = useI18n();
+const toast = useToast();
+const { signIn, signUp } = useAuth();
+const isLoading = ref(false);
+const errorMessages = ref({ email: '', password: '', name: '' });
 
-export type LoginData    = { email: string; password: string; remember?: boolean }
-export type RegisterData = { name: string; email: string; password: string }
-export type ForgotData   = { email: string }
-export type SubmitPayload = LoginData | RegisterData | ForgotData
+const _onSubmit = async () => {
+  isLoading.value = true;
+  try {
+    const payload = {
+      email: state.value.email,
+      password: state.value.password,
+      name: state.value.name,
+      remember: state.value.remember,
+    };
 
-const emit = defineEmits<{
-  submit: [payload: FormSubmitEvent<SubmitPayload>]
-}>()
+    const validationResult = schema.safeParse(payload);
 
-const state = reactive({ email: '', password: '', name: '', remember: false })
+    if (!validationResult.success) {
+      const errors = validationResult.error.flatten().fieldErrors;
+      errorMessages.value = {
+        email: errors.email?.[0] || '',
+        password: errors.password?.[0] || '',
+        name: errors.name?.[0] || '',
+      };
+      toast.add({
+        title: t('authIndex.validationFailed'),
+        description: t('authIndex.pleaseCheckFields'),
+        color: 'error',
+        duration: 3000,
+      });
+      return;
+    }
 
-const schemas = {
-  login:    z.object({ email: z.string().email(), password: z.string().min(8), remember: z.boolean().optional() }),
-  register: z.object({ name: z.string().min(2), email: z.string().email(), password: z.string().min(8) }),
-  forgot:   z.object({ email: z.string().email() })
-}
-const schema = computed(() => schemas[props.mode])
-
-const { t } = useI18n()
-
-const fields = computed(() => {
-  switch (props.mode) {
-    case 'register':
-      return [
-        { name: 'name' as const, label: t('authForm.fullName'), placeholder: t('authForm.fullName'), type: 'text' as const },
-        { name: 'email' as const, label: t('authForm.email'), placeholder: t('authForm.email'), type: 'email' as const },
-        { name: 'password' as const, label: t('authForm.password'), placeholder: t('authForm.password'), type: 'password' as const }
-      ]
-    case 'forgot':
-      return [
-        { name: 'email' as const, label: t('authForm.email'), placeholder: t('authForm.email'), type: 'email' as const }
-      ]
-    default:
-      return [
-        { name: 'email' as const, label: t('authForm.email'), placeholder: t('authForm.email'), type: 'email' as const },
-        { name: 'password' as const, label: t('authForm.password'), placeholder: t('authForm.password'), type: 'password' as const }
-      ]
+    if (activeTab.value === 'signIn') {
+      await signIn({ email: payload.email, password: payload.password });
+    } else {
+      await signUp(payload);
+      toast.add({
+        title: t('authIndex.registrationSuccessful'),
+        description: t('authIndex.pleaseLogIn'),
+        color: 'success',
+        duration: 3000,
+      });
+      activeTab.value = 'signIn';
+    }
+  } catch (err) {
+    const error = err as { data?: { message?: string } };
+    toast.add({
+      title: activeTab.value === 'signIn' ? t('authIndex.loginFailed') : t('authIndex.registrationFailed'),
+      description: error.data?.message || t('authIndex.unknownError'),
+      color: 'error',
+      duration: 3000,
+    });
+  } finally {
+    isLoading.value = false;
   }
-})
+};
 
-const router = useRouter()
-function setMode(m: Mode) { router.replace({ query: { mode: m } }) }
-
-async function onSubmit(event: FormSubmitEvent<SubmitPayload>) {
-  emit('submit', event)
-}
+const switchTab = (tab: 'signIn' | 'signUp') => {
+  activeTab.value = tab;
+};
 </script>
 
 <template>
-  <div class="w-full space-y-6">
-    <div class="text-center">
-      <UIcon name="i-lucide-user" class="mx-auto size-10 text-primary mb-2" />
-      <h1 class="text-xl font-semibold">
-        {{ mode === 'login' ? t('authForm.welcomeBack') : mode === 'register' ? t('authForm.createAccount') : t('authForm.resetPassword') }}
-      </h1>
-      <p class="text-sm text-gray-500 mt-1">
-        <span v-if="mode === 'login'">
-          {{ t('authForm.noAccount') }}
-          <ULink class="text-primary font-medium" @click="setMode('register')">{{ t('authForm.createAccount') }}</ULink>
-        </span>
-        <span v-else-if="mode === 'register'">
-          {{ t('authForm.alreadyAccount') }}
-          <ULink class="text-primary font-medium" @click="setMode('login')">{{ t('authForm.logIn') }}</ULink>
-        </span>
-        <span v-else>
-          {{ t('authForm.rememberPassword') }}
-          <ULink class="text-primary font-medium" @click="setMode('login')">{{ t('authForm.backToLogin') }}</ULink>
-        </span>
-      </p>
-    </div>
-
-    <UForm :schema :state class="space-y-4" @submit="onSubmit">
-      <UFormField
-        v-for="f in fields"
-        :key="f.name"
-        :name="f.name"
-        :label="f.label"
-        required
-      >
-        <UInput v-model="state[f.name]" :type="f.type" :placeholder="f.placeholder" />
-      </UFormField>
-
-      <UCheckbox
-        v-if="mode === 'login'"
-        v-model="state.remember"
-        :label="t('authForm.rememberMe')"
-      />
-
-      <UButton type="submit" block>
-        {{ mode === 'login' ? t('authForm.logIn') : mode === 'register' ? t('authForm.createAccountButton') : t('authForm.sendResetLink') }}
-      </UButton>
-    </UForm>
+  <div class="auth-container">
+    <UContainer>
+      <UCard class="auth-card">
+        <div class="auth-tabs">
+          <UButton
+            :class="{ active: activeTab === 'signIn' }"
+            :aria-pressed="activeTab === 'signIn'"
+            @click="switchTab('signIn')"
+          >
+            {{ t('authForm.signIn') }}
+          </UButton>
+          <UButton
+            :class="{ active: activeTab === 'signUp' }"
+            :aria-pressed="activeTab === 'signUp'"
+            @click="switchTab('signUp')"            
+          >
+            {{ t('authForm.signUp') }}
+          </UButton>
+        </div>
+        <div v-if="activeTab === 'signIn'" class="auth-form">
+          <label for="email">Email</label>
+          <UInput
+            id="email"
+            v-model="state.email"
+            type="email"
+            placeholder="Email"
+            :aria-required="true"
+            :aria-invalid="!!errorMessages.email"
+          />
+          <div v-if="errorMessages.email" class="error-message">{{ errorMessages.email }}</div>
+          
+          <label for="password">Password</label>
+          <UInput
+            id="password"
+            v-model="state.password"
+            type="password"
+            placeholder="Password"
+            :aria-required="true"
+            :aria-invalid="!!errorMessages.password"
+          />
+          <div v-if="errorMessages.password" class="error-message">{{ errorMessages.password }}</div>
+          
+          <UCheckbox v-model="state.remember">
+            {{ t('authForm.keepMeSignedIn') }}
+          </UCheckbox>
+          
+          <UButton color="primary"  :loading="isLoading" @click="_onSubmit">
+            {{ t('authForm.signInButton') }}
+          </UButton>
+        </div>
+        <div v-if="activeTab === 'signUp'" class="auth-form">
+          <label for="name">Full Name</label>
+          <UInput
+            id="name"
+            v-model="state.name"
+            type="text"
+            placeholder="Full Name"
+            :aria-required="true"
+            :aria-invalid="!!errorMessages.name"
+          />
+          <div v-if="errorMessages.name" class="error-message">{{ errorMessages.name }}</div>
+          
+          <label for="email">Email</label>
+          <UInput
+            id="email"
+            v-model="state.email"
+            type="email"
+            placeholder="Email"
+            :aria-required="true"
+            :aria-invalid="!!errorMessages.email"
+          />
+          <div v-if="errorMessages.email" class="error-message">{{ errorMessages.email }}</div>
+          
+          <label for="password">Password</label>
+          <UInput
+            id="password"
+            v-model="state.password"
+            type="password"
+            placeholder="Password"
+            :aria-required="true"
+            :aria-invalid="!!errorMessages.password"
+          />
+          <div v-if="errorMessages.password" class="error-message">{{ errorMessages.password }}</div>
+          
+          <UButton color="primary" :loading="isLoading"  @click="_onSubmit">
+            {{ t('authForm.signUpButton') }}
+          </UButton>
+        </div>
+      </UCard>
+    </UContainer>
   </div>
 </template>
+
+<style scoped>
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.auth-card {
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.auth-tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.auth-tabs .active {
+  background-color: #3498db;
+  color: white;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.875rem;
+  margin-top: 4px;
+}
+</style>

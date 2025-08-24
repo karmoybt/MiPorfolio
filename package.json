@@ -4,30 +4,30 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev && node server/init-db.js ",
+    "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "db:init": "node server/index.js"
-
+    "db:init": "bun server/db/init.js"
   },
   "dependencies": {
-    "@nuxt/eslint": "1.8.0",
-    "@nuxt/ui": "3.3.0",
-    "@sidebase/nuxt-auth": "^1.0.1",
+    "@nuxt/eslint": "^1.9.0",
+    "@nuxt/icon": "^2.0.0",
+    "@nuxt/ui": "^3.3.2",
+    "@sidebase/nuxt-auth": "1.0.1",
     "bcryptjs": "^3.0.2",
-    "eslint": "^9.33.0",
+    "eslint": "^9.34.0",
     "jsonwebtoken": "^9.0.2",
     "nuxt": "^4.0.3",
     "sequelize": "^6.37.7",
     "sqlite3": "^5.1.7",
     "typescript": "^5.9.2",
-    "vue": "^3.5.18",
+    "vue": "^3.5.19",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
-    "@nuxtjs/i18n": "10.0.4",
-    "@types/bcryptjs": "2.4.6",
+    "@nuxtjs/i18n": "^10.0.6",
+    "@types/bcryptjs": "3.0.0",
     "@types/jsonwebtoken": "^9.0.10"
   }
 }

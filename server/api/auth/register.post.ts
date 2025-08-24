@@ -1,13 +1,8 @@
-// server/api/auth/register.post.ts
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import User from '../../db/models/user';
-
-  
-
+import User from '../../db/models/user'; 
 
 export default defineEventHandler(async (event) => {
-
   const { name, email, password } = await readBody(event);
 
   // Verificar si el correo electrónico ya está registrado

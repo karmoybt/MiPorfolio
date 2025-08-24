@@ -15,7 +15,12 @@
     "fullName": "Nombre completo",
     "email": "Correo electrónico",
     "password": "Contraseña",
-    "rememberMe": "Recordarme"
+    "rememberMe": "Recordarme",
+    "signIn": "Iniciar sesión",
+    "signUp": "Registrarse",
+    "signInButton": "Iniciar sesión",
+    "signUpButton": "Registrarse",
+    "keepMeSignedIn": "Mantenerme conectado"
   },
   "logoutButton": {
     "logOut": "Cerrar sesión"
@@ -42,6 +47,7 @@
     "showDetails": "Show details",
     "hideDetails": "Hide details"
   }
-
   
 }
+
+  

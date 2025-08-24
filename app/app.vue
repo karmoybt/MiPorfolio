@@ -27,15 +27,12 @@ useHead({
   ]
 })
 </script>
-<template>
-  <div>
+<!-- <template> -->
+  <!-- <div>
     <NuxtLayout  default>
       <Suspense>
         <template #default>
           <NuxtPage />
-        </template>
-        <template #fallback>
-          <AppSkeleton />
         </template>
       </Suspense>
     </NuxtLayout>
@@ -43,61 +40,15 @@ useHead({
     <ClientOnly>
       <CookieBanner />
     </ClientOnly>
-  </div>
+  </div> -->
+  <template>
+    <UApp>
+      <NuxtLayout  default>
+        <NuxtPage />
+      </NuxtLayout>
+   </UApp>
 </template>
 
 <style>
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
 
-html {
-  -webkit-text-size-adjust: 100%;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  font-family: 'Inter', system-ui, sans-serif;
-  line-height: 1.6;
-}
-
-:root {
-  --header-height: 4rem;
-  --safe-area-inset-top: env(safe-area-inset-top);
-  --safe-area-inset-bottom: env(safe-area-inset-bottom);
-}
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.page-enter-active,
-.page-leave-active {
-  transition: all 0.3s ease-out;
-}
-
-.page-enter-from {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.page-leave-to {
-  opacity: 0;
-  transform: translateY(-20px);
-}
-
-@keyframes shimmer {
-  0% { background-position: -200px 0; }
-  100% { background-position: calc(200px + 100%) 0; }
-}
-
-.skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200px 100%;
-  animation: shimmer 1.5s infinite;
-}
 </style>

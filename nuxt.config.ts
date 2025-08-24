@@ -1,14 +1,23 @@
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
+  compatibilityDate: '2025-08-23',
+  devtools: {
+    enabled: true,
+
+    timeline: {
+      enabled: true,
+    },
+  },
 
   modules: [
     '@nuxt/eslint',
     '@nuxt/ui',
     '@nuxtjs/i18n',
     '@sidebase/nuxt-auth',
+    '@nuxt/icon',
   ],
-
+  icon: {
+    serverBundle: 'remote',
+  },
   i18n: {
     locales: [
       { code: 'es', file: 'es.json', name: 'Español' },

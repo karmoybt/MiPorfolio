@@ -1,4 +1,3 @@
-// server/db/sequelize.js
 import { Sequelize } from 'sequelize';
 
 const sequelizeInstance = new Sequelize({

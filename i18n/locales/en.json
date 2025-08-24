@@ -1,4 +1,16 @@
 {
-  "home": "Home",
-  "about": "About"
+  "authForm": {
+    "signIn": "Iniciar sesión",
+    "signUp": "Registrarse",
+    "signInButton": "Iniciar sesión",
+    "signUpButton": "Registrarse",
+    "keepMeSignedIn": "Mantenerme conectado"
+  },
+  "authIndex": {
+    "registrationSuccessful": "Registro exitoso",
+    "pleaseLogIn": "Por favor, inicia sesión",
+    "loginFailed": "Inicio de sesión fallido",
+    "registrationFailed": "Registro fallido",
+    "unknownError": "Error desconocido"
+  }
 }

@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
-import type { SubmitPayload } from '~/components/AuthForm.vue'
 import { useI18n } from 'vue-i18n'
+
+// Define el tipo SubmitPayload directamente en esta página
+interface SubmitPayload {
+  email: string;
+  password: string;
+  name?: string;
+  remember?: boolean;
+}
 
 type FetchError = {
   data?: {
@@ -44,18 +51,5 @@ const _onSubmit = async (e: FormSubmitEvent<SubmitPayload>) => {
 </script>
 
 <template>
-  <div class="flex h-screen w-full items-center justify-center">
-    <div class="w-full max-w-md space-y-4">
       <AuthForm :mode="mode" @submit="_onSubmit" />
-      
-      <UButton
-        variant="ghost"
-        color="primary"
-        block
-        @click="mode = mode === 'login' ? 'register' : 'login'"
-      >
-        {{ mode === 'login' ? t('authIndex.dontHaveAccount') : t('authIndex.alreadyHaveAccount') }}
-      </UButton>
-    </div>
-  </div>
 </template>
