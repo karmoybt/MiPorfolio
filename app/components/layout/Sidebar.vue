@@ -5,20 +5,15 @@
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"
   >
-    <nav class="main-menu" >
+    <nav class="main-menu">
       <ul>
         <li v-for="item in menuItems" :key="item.to">
           <NuxtLink :to="item.to">
-            <!-- <Icon :name="item.icon" :size="24" />
-            <span class="nav-text">{{ item.text }}</span> -->
-           
-              <Icon :name="item.icon" :size="24" :class="item.active ? 'text-primary-600' : 'text-neutral-600'" aria-hidden="true" />
-              <span class="nav-text text-sm font-medium" >{{ item.text }}</span>
+            <Icon :name="item.icon" :size="24" :class="item.active ? 'text-primary-600' : 'text-neutral-600'" aria-hidden="true" />
+            <span class="nav-text text-sm font-medium">{{ item.text }}</span>
           </NuxtLink>
         </li>
-      </ul>
-      <ul class="logout">
-        <li>
+        <li class="logout">
           <LogoutButton />
         </li>
       </ul>
