@@ -78,7 +78,7 @@ const errorDescription = computed(() => {
           variant="outline"
           size="lg"
           class="w-full sm:w-auto"
-          @click="() => clearError({})"
+          
         >
           <UIcon name="i-heroicons-arrow-path" class="w-5 h-5 mr-2" />
           {{ t('errorPage.retry') }}

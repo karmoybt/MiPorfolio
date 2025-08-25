@@ -1,13 +1,16 @@
-// server/api/auth/login.post.ts
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import User from '../../db/models/user';
+import { sequelizeInstance as sequelize } from '../../db/sequelize';
+import User from '../../db/models/User';
 
+// Inicializar el modelo User
+const UserModel = User(sequelize);
 
 export default defineEventHandler(async (event) => {
   const { email, password } = await readBody(event);
 
-  const userModel = await User.findOne({ where: { email } });
+  // Buscar el usuario por correo electrónico
+  const userModel = await UserModel.findOne({ where: { email } });
 
   if (!userModel) {
     throw createError({ statusCode: 401, statusMessage: 'Invalid credentials' });

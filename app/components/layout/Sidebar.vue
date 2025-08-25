@@ -35,6 +35,8 @@ export default {
       menuItems: [
         { to: '/', icon: 'material-symbols:space-dashboard-rounded', text: 'Home' },
         { to: '/dashboard', icon: 'mdi-light:format-align-left', text: 'Dashboard' },
+        { to: '/dashboard/ebn', icon: 'mdi-light:format-align-left', text: 'Importar EBN' },
+
         { to: '/auth', icon: 'mdi-light:shield', text: 'Login' }
       ]
     };

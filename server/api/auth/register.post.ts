@@ -1,12 +1,16 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import User from '../../db/models/user'; 
+import { sequelizeInstance as sequelize } from '../../db/sequelize';
+import User from '../../db/models/user';
+
+// Inicializar el modelo User
+const UserModel = User(sequelize);
 
 export default defineEventHandler(async (event) => {
   const { name, email, password } = await readBody(event);
 
   // Verificar si el correo electrónico ya está registrado
-  const exists = await User.findOne({ where: { email } });
+  const exists = await UserModel.findOne({ where: { email } });
   if (exists) {
     throw createError({ statusCode: 409, statusMessage: 'Email already registered' });
   }
@@ -16,7 +20,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     // Crear un nuevo usuario
-    const user = await User.create({ name, email, password: hashed });
+    const user = await UserModel.create({ name, email, password: hashed });
 
     // Tipificar el modelo de usuario
     const userData = user.get() as { id: number, name: string, email: string };
