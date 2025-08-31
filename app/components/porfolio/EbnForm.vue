@@ -1,3 +1,4 @@
+<!-- app\components\porfolio\EbnForm.vue -->
 <template>
   <div>
     <h1>Importar Cartera</h1>
@@ -15,7 +16,7 @@ const jsonData = ref('');
 async function importPortfolio() {
   try {
     const parsedData = JSON.parse(jsonData.value);
-    const { error } = await useFetch('/api/portfolio/ebn', {
+    const { error } = await useFetch('/api/porfolio/ebn', {
       method: 'POST',
       body: parsedData,
     });

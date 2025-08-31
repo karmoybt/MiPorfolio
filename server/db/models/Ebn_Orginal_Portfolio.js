@@ -10,10 +10,10 @@ export default (sequelize) => {
     },
     UserId: {
       type: DataTypes.INTEGER,
-      references: {
-        model: 'User', // Nombre de la tabla relacionada
-        key: 'id',     // Campo de la tabla relacionada
-      }
+      // references: {
+      //   model: 'User', // Nombre de la tabla relacionada
+      //   key: 'id',     // Campo de la tabla relacionada
+      // }
     },
     FundIsin: {
       type: DataTypes.STRING(50),

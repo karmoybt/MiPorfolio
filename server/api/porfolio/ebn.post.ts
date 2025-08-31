@@ -1,15 +1,28 @@
-// server/api/porfolio/ebn.post.ts
-import Ebn_Orginal_Portfolio from '../../db/models/Ebn_Orginal_Portfolio'; // Importa la función
-
+import { sequelizeInstance as sequelize } from '../../db/sequelize';
+import Ebn_Orginal_Portfolio from '../../db/models/Ebn_Orginal_Portfolio';
+import User from '../../db/models/User';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
   try {
-    // Iterar sobre cada posición en el JSON
+    const Ebn_Orginal_PortfolioModel = Ebn_Orginal_Portfolio(sequelize);
+    const UserModel = User(sequelize);
+
+    // Obtener el primer usuario
+    const user = await UserModel.findOne({
+      attributes: ['id'],
+      order: [['id', 'ASC']],
+      limit: 1,
+    });
+    console.log(user.id)
+    if (!user) {
+      throw new Error('No se encontró ningún usuario');
+    }
+
     for (const position of body.position) {
       const portfolioData = {
-        UserId: 1 , // Aquí debes obtener el ID del usuario actual
+        UserId: user.id,
         FundIsin: position.fundIsin,
         FundName: position.fundName,
         FundShares: position.fundShares,
@@ -36,7 +49,7 @@ export default defineEventHandler(async (event) => {
       };
 
       // Crear una nueva entrada en la tabla Ebn_Orginal_Portfolio
-      await Ebn_Orginal_Portfolio(portfolioData);
+      await Ebn_Orginal_PortfolioModel.create(portfolioData);
     }
 
     return { message: 'Cartera importada correctamente' };

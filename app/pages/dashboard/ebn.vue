@@ -1,6 +1,7 @@
 <template>
   <div>
     <porfolioEbnForm/>
+    <porfolioEbnTabla/>
   </div>
 </template>
 

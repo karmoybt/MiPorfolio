@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { sequelizeInstance as sequelize } from '../../db/sequelize';
-import User from '../../db/models/user';
+import User from '../../db/models/User';
 
 // Inicializar el modelo User
 const UserModel = User(sequelize);

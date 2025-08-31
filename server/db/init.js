@@ -26,7 +26,7 @@ const backupDatabase = async (models) => {
 // Función para cargar y sincronizar los modelos
 const loadModels = async () => {
   // Define la ruta a la carpeta 'models'
-  const modelsDir = path.join(__dirname, '../../backup');
+  const modelsDir = path.join(__dirname, '/models');
   const modelFiles = fs.readdirSync(modelsDir).filter(file => file.endsWith('.js') && file !== 'init.js');
   const models = [];
 
@@ -47,7 +47,7 @@ const loadModels = async () => {
   });
 
   // Sincronizar los modelos con la base de datos
-  await sequelize.sync({ force: true, alter: true }).then(() => {
+  await sequelize.sync({ alter: true}).then(() => {
     console.log('Modelos sincronizados correctamente.');
   }).catch(err => {
     console.error('Error al sincronizar los modelos:', err);
